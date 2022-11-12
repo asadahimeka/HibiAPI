@@ -12,7 +12,7 @@ net:
   # api-key: |
   #   aaaaaaa
   #   bbbbbbb
-  api-key: ""
+  api-key: "b9c16e6ee1b2cd9919739f2f44146943eca48355"
 
   keys: # SauceNAO 的API KEY, 支持多个以进行负载均衡
     - ""
