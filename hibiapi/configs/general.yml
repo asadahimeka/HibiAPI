@@ -22,8 +22,8 @@ server:
 
   cors:
     origins:
-      - "http://localhost.tiangolo.com"
-      - "https://localhost.tiangolo.com"
+      - "https://pixiv.kanata.ml"
+      - "https://pixiv.nanoka.top"
       - "http://localhost"
       - "http://localhost:8080"
     credentials: true
@@ -65,7 +65,7 @@ content:
     ![](https://img.shields.io/github/stars/mixmoe/HibiAPI?color=brightgreen&logo=github&style=for-the-badge)
   robots: | # 提供的robots.txt内容, 用于提供搜索引擎抓取
     User-agent: *
-    Disallow: /api/
+    Disallow: /
 
 authorization:
   enabled: false # 是否开启验证
