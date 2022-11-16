@@ -38,11 +38,14 @@ class RankingType(str, Enum):
     """原创"""
     week_rookie = "week_rookie"
     """新人"""
+    daily_ai = "daily_ai"
+    """AI"""
     day_r18 = "day_r18"
     day_male_r18 = "day_male_r18"
     day_female_r18 = "day_female_r18"
     week_r18 = "week_r18"
     week_r18g = "week_r18g"
+    daily_r18_ai = "daily_r18_ai"
 
 
 @enum_auto_doc
