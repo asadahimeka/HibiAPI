@@ -152,12 +152,14 @@ class PixivEndpoints(BaseEndpoint):
     async def illust_recommended(
         self,
         *,
+        pf_filter: str = "for_ios",
+        include_ranking_label: bool = True,
     ):
         return await self.request(
             "v1/illust/recommended",
             params={
-                "filter": "for_ios",
-                "include_ranking_label": "true",
+                "filter": pf_filter,
+                "include_ranking_label": include_ranking_label,
             },
         )
 
@@ -165,11 +167,12 @@ class PixivEndpoints(BaseEndpoint):
     async def user_recommended(
         self,
         *,
+        pf_filter: str = "for_ios",
     ):
         return await self.request(
             "v1/user/recommended",
             params={
-                "filter": "for_ios",
+                "filter": pf_filter,
             },
         )
 
@@ -193,11 +196,12 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         category: str,
+        pf_filter: str = "for_ios",
     ):
         return await self.request(
             "v1/spotlight/articles",
             params={
-                "filter": "for_ios",
+                "filter": pf_filter,
                 "category": category,
             },
         )
