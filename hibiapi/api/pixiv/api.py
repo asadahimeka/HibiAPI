@@ -148,6 +148,60 @@ class PixivEndpoints(BaseEndpoint):
     async def member(self, *, id: int):
         return await self.request("v1/user/detail", params={"user_id": id})
 
+    @cache_config(ttl=timedelta(hours=1))
+    async def illust_recommended(
+        self,
+        *,
+    ):
+        return await self.request(
+            "v1/illust/recommended",
+            params={
+                "filter": "for_ios",
+                "include_ranking_label": "true",
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=3))
+    async def user_recommended(
+        self,
+        *,
+    ):
+        return await self.request(
+            "v1/user/recommended",
+            params={
+                "filter": "for_ios",
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=6))
+    async def search_autocomplete(
+        self,
+        *,
+        word: str,
+        merge_plain_keyword_results: bool = True,
+    ):
+        return await self.request(
+            "v2/search/autocomplete",
+            params={
+                "word": word,
+                "merge_plain_keyword_results": merge_plain_keyword_results,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=12))
+    async def spotlight(
+        self,
+        *,
+        category: str,
+    ):
+        return await self.request(
+            "v1/spotlight/articles",
+            params={
+                "filter": "for_ios",
+                "category": category,
+            },
+        )
+
     async def member_illust(
         self,
         *,
