@@ -152,13 +152,28 @@ class PixivEndpoints(BaseEndpoint):
     async def illust_recommended(
         self,
         *,
-        pf_filter: str = "for_ios",
+        filter: str = "for_ios",
         include_ranking_label: bool = True,
     ):
         return await self.request(
             "v1/illust/recommended",
             params={
-                "filter": pf_filter,
+                "filter": filter,
+                "include_ranking_label": include_ranking_label,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def illust_recommended_nologin(
+        self,
+        *,
+        filter: str = "for_ios",
+        include_ranking_label: bool = True,
+    ):
+        return await self.request(
+            "v1/illust/recommended-nologin",
+            params={
+                "filter": filter,
                 "include_ranking_label": include_ranking_label,
             },
         )
@@ -167,16 +182,31 @@ class PixivEndpoints(BaseEndpoint):
     async def user_recommended(
         self,
         *,
-        pf_filter: str = "for_ios",
+        filter: str = "for_ios",
     ):
         return await self.request(
             "v1/user/recommended",
             params={
-                "filter": pf_filter,
+                "filter": filter,
+            },
+        )
+    
+    @cache_config(ttl=timedelta(minutes=10))
+    async def illust_new(
+        self,
+        *,
+        content_type: str = "illust",
+        filter: str = "for_ios",
+    ):
+        return await self.request(
+            "v1/illust/new",
+            params={
+                "content_type": content_type,
+                "filter": filter,
             },
         )
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def search_autocomplete(
         self,
         *,
@@ -196,13 +226,16 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         category: str,
-        pf_filter: str = "for_ios",
+        filter: str = "for_ios",
+        page: int = 1,
+        size: int = 20,
     ):
         return await self.request(
             "v1/spotlight/articles",
             params={
-                "filter": pf_filter,
+                "filter": filter,
                 "category": category,
+                "offset": (page - 1) * size,
             },
         )
 
@@ -269,6 +302,24 @@ class PixivEndpoints(BaseEndpoint):
     ):
         return await self.request(
             "v1/illust/ranking",
+            params={
+                "mode": mode,
+                "date": RankingDate.new(date or RankingDate.yesterday()).toString(),
+                "offset": (page - 1) * size,
+            },
+        )
+    
+    @cache_config(ttl=timedelta(hours=12))
+    async def rank_novel(
+        self,
+        *,
+        mode: RankingType = RankingType.day,
+        date: Optional[RankingDate] = None,
+        page: int = 1,
+        size: int = 50,
+    ):
+        return await self.request(
+            "v1/novel/ranking",
             params={
                 "mode": mode,
                 "date": RankingDate.new(date or RankingDate.yesterday()).toString(),
