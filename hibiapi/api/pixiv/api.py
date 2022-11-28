@@ -163,21 +163,6 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
-    async def illust_recommended_nologin(
-        self,
-        *,
-        filter: str = "for_ios",
-        include_ranking_label: bool = True,
-    ):
-        return await self.request(
-            "v1/illust/recommended-nologin",
-            params={
-                "filter": filter,
-                "include_ranking_label": include_ranking_label,
-            },
-        )
-
     @cache_config(ttl=timedelta(hours=3))
     async def user_recommended(
         self,
