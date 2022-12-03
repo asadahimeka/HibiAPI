@@ -227,7 +227,7 @@ class PixivEndpoints(BaseEndpoint):
     @cache_config(ttl=timedelta(hours=6))
     async def popular_preview(self, *, word: str):
         return await self.request(
-            "v1/search/popular-preview/illust,
+            "v1/search/popular-preview/illust",
             params={
                 "word": word,
                 "filter": "for_ios",
@@ -240,7 +240,7 @@ class PixivEndpoints(BaseEndpoint):
     @cache_config(ttl=timedelta(hours=1))
     async def search_user(self, *, word: str):
         return await self.request(
-            "v1/search/user,
+            "v1/search/user",
             params={
                 "filter": "for_ios",
                 "word": word,
