@@ -140,15 +140,15 @@ class PixivEndpoints(BaseEndpoint):
         )
         return response.json()
 
-    @cache_config(ttl=timedelta(days=3))
+    @cache_config(ttl=timedelta(hours=6))
     async def illust(self, *, id: int):
         return await self.request("v1/illust/detail", params={"illust_id": id})
 
-    @cache_config(ttl=timedelta(days=1))
+    @cache_config(ttl=timedelta(hours=6))
     async def member(self, *, id: int):
         return await self.request("v1/user/detail", params={"user_id": id})
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=2))
     async def illust_recommended(
         self,
         *,
@@ -163,7 +163,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=3))
+    @cache_config(ttl=timedelta(hours=2))
     async def user_recommended(
         self,
         *,
@@ -206,7 +206,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=12))
+    @cache_config(ttl=timedelta(hours=6))
     async def spotlight(
         self,
         *,
@@ -236,14 +236,20 @@ class PixivEndpoints(BaseEndpoint):
                 "search_target": "partial_match_for_tags",
             },
         )
-    
+
     @cache_config(ttl=timedelta(hours=1))
-    async def search_user(self, *, word: str):
+    async def search_user(
+        self,
+        *,
+        word: str,
+        page: int = 1,
+        size: int = 50,
+    ):
         return await self.request(
             "v1/search/user",
             params={
-                "filter": "for_ios",
                 "word": word,
+                "offset": (page - 1) * size,
             },
         )
 
@@ -299,7 +305,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=12))
+    @cache_config(ttl=timedelta(hours=6))
     async def rank(
         self,
         *,
@@ -317,7 +323,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
     
-    @cache_config(ttl=timedelta(hours=12))
+    @cache_config(ttl=timedelta(hours=6))
     async def rank_novel(
         self,
         *,
@@ -335,6 +341,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
+    @cache_config(ttl=timedelta(minutes=10))
     async def search(
         self,
         *,
@@ -356,7 +363,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=12))
+    @cache_config(ttl=timedelta(hours=6))
     async def tags(self):
         return await self.request("v1/trending-tags/illust")
 
