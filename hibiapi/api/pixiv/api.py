@@ -232,8 +232,8 @@ class PixivEndpoints(BaseEndpoint):
                 "word": word,
                 "filter": "for_ios",
                 "include_translated_tag_results": "true",
-                "merge_plain_keyword_results": "partial_match_for_tags",
-                "search_target": "for_ios",
+                "merge_plain_keyword_results": "true",
+                "search_target": "partial_match_for_tags",
             },
         )
     
