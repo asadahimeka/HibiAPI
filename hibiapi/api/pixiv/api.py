@@ -148,7 +148,7 @@ class PixivEndpoints(BaseEndpoint):
     async def member(self, *, id: int):
         return await self.request("v1/user/detail", params={"user_id": id})
 
-    @cache_config(ttl=timedelta(hours=2))
+    @cache_config(ttl=timedelta(hours=4))
     async def illust_recommended(
         self,
         *,
@@ -163,7 +163,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=2))
+    @cache_config(ttl=timedelta(hours=4))
     async def user_recommended(
         self,
         *,
@@ -176,7 +176,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
     
-    @cache_config(ttl=timedelta(minutes=10))
+    @cache_config(ttl=timedelta(hours=1))
     async def illust_new(
         self,
         *,
@@ -253,6 +253,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
+    @cache_config(ttl=timedelta(hours=1))
     async def member_illust(
         self,
         *,
@@ -270,6 +271,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
+    @cache_config(ttl=timedelta(hours=1))
     async def favorite(
         self,
         *,
@@ -341,7 +343,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(minutes=10))
+    @cache_config(ttl=timedelta(hours=1))
     async def search(
         self,
         *,
@@ -367,7 +369,7 @@ class PixivEndpoints(BaseEndpoint):
     async def tags(self):
         return await self.request("v1/trending-tags/illust")
 
-    @cache_config(ttl=timedelta(minutes=15))
+    @cache_config(ttl=timedelta(hours=1))
     async def related(self, *, id: int, page: int = 1, size: int = 20):
         return await self.request(
             "v2/illust/related",

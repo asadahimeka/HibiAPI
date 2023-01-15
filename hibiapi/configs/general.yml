@@ -23,7 +23,9 @@ server:
   cors:
     origins:
       - "https://pixiv.kanata.ml"
+      - "https://pixiviz.kanata.ml"
       - "https://pixiv.nanoka.top"
+      - "https://www.nanoka.top"
       - "http://localhost"
       - "http://localhost:8080"
     credentials: true
