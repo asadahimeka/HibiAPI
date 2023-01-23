@@ -38,14 +38,14 @@ class RankingType(str, Enum):
     """原创"""
     week_rookie = "week_rookie"
     """新人"""
-    daily_ai = "daily_ai"
+    day_ai = "day_ai"
     """AI"""
     day_r18 = "day_r18"
     day_male_r18 = "day_male_r18"
     day_female_r18 = "day_female_r18"
     week_r18 = "week_r18"
     week_r18g = "week_r18g"
-    daily_r18_ai = "daily_r18_ai"
+    day_r18_ai = "day_r18_ai"
 
 
 @enum_auto_doc
@@ -311,7 +311,7 @@ class PixivEndpoints(BaseEndpoint):
     async def rank(
         self,
         *,
-        mode: RankingType = RankingType.week,
+        mode: RankingType = RankingType.day,
         date: Optional[RankingDate] = None,
         page: int = 1,
         size: int = 50,
