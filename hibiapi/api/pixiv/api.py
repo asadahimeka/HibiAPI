@@ -46,6 +46,7 @@ class RankingType(str, Enum):
     week_r18 = "week_r18"
     week_r18g = "week_r18g"
     day_r18_ai = "day_r18_ai"
+    day_manga = "day_manga"
 
 
 @enum_auto_doc
@@ -175,8 +176,8 @@ class PixivEndpoints(BaseEndpoint):
                 "filter": filter,
             },
         )
-    
-    @cache_config(ttl=timedelta(hours=1))
+
+    @cache_config(ttl=timedelta(minutes=30))
     async def illust_new(
         self,
         *,
@@ -207,13 +208,13 @@ class PixivEndpoints(BaseEndpoint):
         )
 
     @cache_config(ttl=timedelta(hours=6))
-    async def spotlight(
+    async def spotlights(
         self,
         *,
-        category: str,
+        category: str = "all",
         filter: str = "for_ios",
         page: int = 1,
-        size: int = 20,
+        size: int = 10,
     ):
         return await self.request(
             "v1/spotlight/articles",
@@ -225,11 +226,19 @@ class PixivEndpoints(BaseEndpoint):
         )
 
     @cache_config(ttl=timedelta(hours=6))
-    async def popular_preview(self, *, word: str):
+    async def popular_preview(
+        self,
+        *,
+        word: str,
+        start_date: str = None,
+        end_date: str = None,
+    ):
         return await self.request(
             "v1/search/popular-preview/illust",
             params={
                 "word": word,
+                "start_date": start_date,
+                "end_date": end_date,
                 "filter": "for_ios",
                 "include_translated_tag_results": "true",
                 "merge_plain_keyword_results": "true",
@@ -243,7 +252,7 @@ class PixivEndpoints(BaseEndpoint):
         *,
         word: str,
         page: int = 1,
-        size: int = 50,
+        size: int = 30,
     ):
         return await self.request(
             "v1/search/user",
@@ -260,7 +269,7 @@ class PixivEndpoints(BaseEndpoint):
         id: int,
         illust_type: IllustType = IllustType.illust,
         page: int = 1,
-        size: int = 20,
+        size: int = 30,
     ):
         return await self.request(
             "v1/user/illusts",
@@ -289,7 +298,8 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def following(self, *, id: int, page: int = 1, size: int = 20):
+    @cache_config(ttl=timedelta(hours=1))
+    async def following(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v1/user/following",
             params={
@@ -298,7 +308,8 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def follower(self, *, id: int, page: int = 1, size: int = 20):
+    @cache_config(ttl=timedelta(hours=1))
+    async def follower(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v1/user/follower",
             params={
@@ -314,28 +325,10 @@ class PixivEndpoints(BaseEndpoint):
         mode: RankingType = RankingType.day,
         date: Optional[RankingDate] = None,
         page: int = 1,
-        size: int = 50,
+        size: int = 30,
     ):
         return await self.request(
             "v1/illust/ranking",
-            params={
-                "mode": mode,
-                "date": RankingDate.new(date or RankingDate.yesterday()).toString(),
-                "offset": (page - 1) * size,
-            },
-        )
-    
-    @cache_config(ttl=timedelta(hours=6))
-    async def rank_novel(
-        self,
-        *,
-        mode: RankingType = RankingType.day,
-        date: Optional[RankingDate] = None,
-        page: int = 1,
-        size: int = 50,
-    ):
-        return await self.request(
-            "v1/novel/ranking",
             params={
                 "mode": mode,
                 "date": RankingDate.new(date or RankingDate.yesterday()).toString(),
@@ -351,8 +344,12 @@ class PixivEndpoints(BaseEndpoint):
         mode: SearchModeType = SearchModeType.partial_match_for_tags,
         order: SearchSortType = SearchSortType.date_desc,
         duration: Optional[SearchDurationType] = None,
+        start_date: str = None,
+        end_date: str = None,
+        include_translated_tag_results: str = 'true',
+        merge_plain_keyword_results: str = 'true',
         page: int = 1,
-        size: int = 50,
+        size: int = 30,
     ):
         return await self.request(
             "v1/search/illust",
@@ -360,6 +357,10 @@ class PixivEndpoints(BaseEndpoint):
                 "word": word,
                 "search_target": mode,
                 "sort": order,
+                "include_translated_tag_results": include_translated_tag_results,
+                "merge_plain_keyword_results": merge_plain_keyword_results,
+                "start_date": start_date,
+                "end_date": end_date,
                 "duration": duration,
                 "offset": (page - 1) * size,
             },
@@ -370,7 +371,7 @@ class PixivEndpoints(BaseEndpoint):
         return await self.request("v1/trending-tags/illust")
 
     @cache_config(ttl=timedelta(hours=1))
-    async def related(self, *, id: int, page: int = 1, size: int = 20):
+    async def related(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v2/illust/related",
             params={
@@ -388,24 +389,160 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def member_novel(self, *, id: int, page: int = 1, size: int = 20):
+    async def walkthrough_illusts(self):
+        return await self.request("v1/walkthrough/illusts")
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def illust_comments(
+        self,
+        *,
+        illust_id: int | str,
+        offset: int | str | None = None,
+        include_total_comments: str | bool | None = None,
+    ):
         return await self.request(
-            "/v1/user/novels",
+            "v3/illust/comments",
+            params={
+                "illust_id": illust_id,
+                "offset": offset,
+                "include_total_comments": include_total_comments,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def novel_comments(
+        self,
+        *,
+        novel_id: int | str,
+        offset: int | str | None = None,
+        include_total_comments: str | bool | None = None,
+    ):
+        return await self.request(
+            "v3/novel/comments",
+            params={
+                "novel_id": novel_id,
+                "offset": offset,
+                "include_total_comments": include_total_comments,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def illust_comment_replies(
+        self,
+        *,
+        comment_id: int | str,
+    ):
+        return await self.request(
+            "v2/illust/comment/replies",
+            params={
+                "comment_id": comment_id,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def novel_comment_replies(
+        self,
+        *,
+        comment_id: int | str,
+    ):
+        return await self.request(
+            "v2/novel/comment/replies",
+            params={
+                "comment_id": comment_id,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=3))
+    async def manga_recommended(
+        self,
+        *,
+        filter: str = "for_ios",
+        include_ranking_label: str = "true",
+    ):
+        return await self.request(
+            "v1/manga/recommended",
+            params={
+                "filter": filter,
+                "include_ranking_label": include_privacy_policy,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=6))
+    async def rank_novel(
+        self,
+        *,
+        mode: str,
+        date: Optional[RankingDate] = None,
+        page: int = 1,
+        size: int = 30,
+    ):
+        return await self.request(
+            "v1/novel/ranking",
+            params={
+                "mode": mode,
+                "date": RankingDate.new(date or RankingDate.yesterday()).toString(),
+                "offset": (page - 1) * size,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def member_novel(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request(
+            "v1/user/novels",
             params={
                 "user_id": id,
                 "offset": (page - 1) * size,
             },
         )
 
+    @cache_config(ttl=timedelta(hours=3))
+    async def novel_recommended(
+        self,
+        *,
+        filter: str = "for_ios",
+        include_privacy_policy: str = "true",
+        include_ranking_novels: str = "true",
+    ):
+        return await self.request(
+            "v1/novel/recommended",
+            params={
+                "filter": filter,
+                "include_privacy_policy": include_privacy_policy,
+                "include_ranking_novels": include_ranking_novels,
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def favorite_novel(
+        self,
+        *,
+        id: int,
+    ):
+        return await self.request(
+            "v1/user/bookmarks/novel",
+            params={
+               "user_id": id,
+               "restrict": "public",
+            },
+        )
+
+    @cache_config(ttl=timedelta(hours=6))
+    async def tags_novel(self):
+        return await self.request("v1/trending-tags/novel")
+
+    @cache_config(ttl=timedelta(hours=1))
     async def novel_series(self, *, id: int):
         return await self.request("/v2/novel/series", params={"series_id": id})
 
+    @cache_config(ttl=timedelta(hours=1))
     async def novel_detail(self, *, id: int):
         return await self.request("/v2/novel/detail", params={"novel_id": id})
 
+    @cache_config(ttl=timedelta(hours=1))
     async def novel_text(self, *, id: int):
         return await self.request("/v1/novel/text", params={"novel_id": id})
 
+    @cache_config(ttl=timedelta(hours=1))
     async def search_novel(
         self,
         *,
@@ -414,9 +551,11 @@ class PixivEndpoints(BaseEndpoint):
         sort: SearchSortType = SearchSortType.date_desc,
         merge_plain_keyword_results: bool = True,
         include_translated_tag_results: bool = True,
+        start_date: str = None,
+        end_date: str = None,
         duration: Optional[SearchDurationType] = None,
         page: int = 1,
-        size: int = 50,
+        size: int = 30,
     ):
         return await self.request(
             "/v1/search/novel",
@@ -426,11 +565,35 @@ class PixivEndpoints(BaseEndpoint):
                 "sort": sort,
                 "merge_plain_keyword_results": merge_plain_keyword_results,
                 "include_translated_tag_results": include_translated_tag_results,
+                "start_date": start_date,
+                "end_date": end_date,
                 "duration": duration,
                 "offset": (page - 1) * size,
             },
         )
 
+    @cache_config(ttl=timedelta(hours=6))
+    async def popular_preview_novel(
+        self,
+        *,
+        word: str,
+        start_date: str = None,
+        end_date: str = None,
+    ):
+        return await self.request(
+            "v1/search/popular-preview/novel",
+            params={
+                "word": word,
+                "start_date": start_date,
+                "end_date": end_date,
+                "filter": "for_ios",
+                "include_translated_tag_results": "true",
+                "merge_plain_keyword_results": "true",
+                "search_target": "partial_match_for_tags",
+            },
+        )
+
+    @cache_config(ttl=timedelta(minutes=10))
     async def novel_new(self, *, max_novel_id: Optional[int] = None):
         return await self.request(
             "/v1/novel/new", params={"max_novel_id": max_novel_id}
