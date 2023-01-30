@@ -31,11 +31,7 @@ class ConfigSubView(confuse.Subview):
         return self.get(str)
 
     def as_str_seq(self, split: str = "\n") -> List[str]:
-        return [
-            stripped
-            for line in self.as_str().strip().split(split)
-            if (stripped := line.strip())
-        ]
+        return self.as_str().strip().split(split)
 
     def as_number(self) -> int:
         return self.get(int)

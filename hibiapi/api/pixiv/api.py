@@ -125,18 +125,11 @@ class PixivEndpoints(BaseEndpoint):
         self, endpoint: str, *, params: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         headers = self.client.headers.copy()
-
-        net_client = cast(PixivNetClient, self.client.net_client)
-        async with net_client.auth_lock:
-            auth, token = net_client.get_available_user()
-            if auth is None:
-                auth = await net_client.auth(token)
-        headers["Authorization"] = f"Bearer {auth.access_token}"
-
+        if user := cast(PixivNetClient, self.client.net_client).user:
+            headers["Authorization"] = f"Bearer {user.access_token}"
         if language := request_headers.get().get("Accept-Language"):
             language = self._parse_accept_language(language)
             headers["Accept-Language"] = language
-
         response = await self.client.get(
             self._join(
                 base=PixivConstants.APP_HOST,
@@ -217,10 +210,10 @@ class PixivEndpoints(BaseEndpoint):
     async def spotlight(
         self,
         *,
-        category: str = "all",
+        category: str,
         filter: str = "for_ios",
         page: int = 1,
-        size: int = 10,
+        size: int = 20,
     ):
         return await self.request(
             "v1/spotlight/articles",
@@ -250,7 +243,7 @@ class PixivEndpoints(BaseEndpoint):
         *,
         word: str,
         page: int = 1,
-        size: int = 30,
+        size: int = 50,
     ):
         return await self.request(
             "v1/search/user",
@@ -267,7 +260,7 @@ class PixivEndpoints(BaseEndpoint):
         id: int,
         illust_type: IllustType = IllustType.illust,
         page: int = 1,
-        size: int = 30,
+        size: int = 20,
     ):
         return await self.request(
             "v1/user/illusts",
@@ -296,7 +289,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def following(self, *, id: int, page: int = 1, size: int = 30):
+    async def following(self, *, id: int, page: int = 1, size: int = 20):
         return await self.request(
             "v1/user/following",
             params={
@@ -305,7 +298,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def follower(self, *, id: int, page: int = 1, size: int = 30):
+    async def follower(self, *, id: int, page: int = 1, size: int = 20):
         return await self.request(
             "v1/user/follower",
             params={
@@ -321,7 +314,7 @@ class PixivEndpoints(BaseEndpoint):
         mode: RankingType = RankingType.day,
         date: Optional[RankingDate] = None,
         page: int = 1,
-        size: int = 30,
+        size: int = 50,
     ):
         return await self.request(
             "v1/illust/ranking",
@@ -339,7 +332,7 @@ class PixivEndpoints(BaseEndpoint):
         mode: RankingType = RankingType.day,
         date: Optional[RankingDate] = None,
         page: int = 1,
-        size: int = 30,
+        size: int = 50,
     ):
         return await self.request(
             "v1/novel/ranking",
@@ -359,7 +352,7 @@ class PixivEndpoints(BaseEndpoint):
         order: SearchSortType = SearchSortType.date_desc,
         duration: Optional[SearchDurationType] = None,
         page: int = 1,
-        size: int = 30,
+        size: int = 50,
     ):
         return await self.request(
             "v1/search/illust",
@@ -377,7 +370,7 @@ class PixivEndpoints(BaseEndpoint):
         return await self.request("v1/trending-tags/illust")
 
     @cache_config(ttl=timedelta(hours=1))
-    async def related(self, *, id: int, page: int = 1, size: int = 30):
+    async def related(self, *, id: int, page: int = 1, size: int = 20):
         return await self.request(
             "v2/illust/related",
             params={
@@ -395,7 +388,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    async def member_novel(self, *, id: int, page: int = 1, size: int = 30):
+    async def member_novel(self, *, id: int, page: int = 1, size: int = 20):
         return await self.request(
             "/v1/user/novels",
             params={
@@ -423,7 +416,7 @@ class PixivEndpoints(BaseEndpoint):
         include_translated_tag_results: bool = True,
         duration: Optional[SearchDurationType] = None,
         page: int = 1,
-        size: int = 30,
+        size: int = 50,
     ):
         return await self.request(
             "/v1/search/novel",

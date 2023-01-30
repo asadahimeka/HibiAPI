@@ -112,9 +112,7 @@ class BaseNetClient:
         if not (exc_type and exc_value and traceback):
             return
         if self.client and not self.client.is_closed:
-            client = self.client
-            self.client = None
-            await client.__aexit__(exc_type, exc_value, traceback)
+            await self.client.__aexit__(exc_type, exc_value, traceback)
         return
 
 
