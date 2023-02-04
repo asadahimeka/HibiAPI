@@ -5,7 +5,7 @@ from typing import List
 import pytest
 from fastapi.testclient import TestClient
 from pytest_benchmark.fixture import BenchmarkFixture
-from requests.models import Response
+from httpx import Response
 
 
 @pytest.fixture(scope="package")

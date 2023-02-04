@@ -47,6 +47,11 @@ class RankingType(str, Enum):
     week_r18g = "week_r18g"
     day_r18_ai = "day_r18_ai"
     day_manga = "day_manga"
+    week_manga = "week_manga"
+    month_manga = "month_manga"
+    week_rookie_manga = "week_rookie_manga"
+    day_r18_manga = "day_r18_manga"
+    week_r18_manga = "week_r18_manga"
 
 
 @enum_auto_doc
@@ -346,8 +351,8 @@ class PixivEndpoints(BaseEndpoint):
         duration: Optional[SearchDurationType] = None,
         start_date: str = None,
         end_date: str = None,
-        include_translated_tag_results: str = 'true',
-        merge_plain_keyword_results: str = 'true',
+        include_translated_tag_results: bool = True,
+        merge_plain_keyword_results: bool = True,
         page: int = 1,
         size: int = 30,
     ):
@@ -392,20 +397,32 @@ class PixivEndpoints(BaseEndpoint):
     async def walkthrough_illusts(self):
         return await self.request("v1/walkthrough/illusts")
 
+    async def illust_series(self, *, id: int):
+        return await self.request("v1/illust/series", params={"illust_series_id": id})
+
+    async def member_illust_series(self, *, id: int):
+        return await self.request("v1/user/illust-series", params={"user_id": id})
+
+    async def member_novel_series(self, *, id: int):
+        return await self.request("v1/user/novel-series", params={"user_id": id})
+
+    @cache_config(ttl=timedelta(hours=1))
+    async def related_member(self, *, id: int):
+        return await self.request("v1/user/related", params={"seed_user_id": id})
+
     @cache_config(ttl=timedelta(hours=1))
     async def illust_comments(
         self,
         *,
-        illust_id: int | str,
-        offset: int | str | None = None,
-        include_total_comments: str | bool | None = None,
+        id: int,
+        page: int = 1,
+        size: int = 30,
     ):
         return await self.request(
             "v3/illust/comments",
             params={
-                "illust_id": illust_id,
-                "offset": offset,
-                "include_total_comments": include_total_comments,
+                "illust_id": id,
+                "offset": (page - 1) * size,
             },
         )
 
@@ -413,16 +430,15 @@ class PixivEndpoints(BaseEndpoint):
     async def novel_comments(
         self,
         *,
-        novel_id: int | str,
-        offset: int | str | None = None,
-        include_total_comments: str | bool | None = None,
+        id: int,
+        page: int = 1,
+        size: int = 30,
     ):
         return await self.request(
             "v3/novel/comments",
             params={
-                "novel_id": novel_id,
-                "offset": offset,
-                "include_total_comments": include_total_comments,
+                "novel_id": id,
+                "offset": (page - 1) * size,
             },
         )
 
@@ -430,12 +446,12 @@ class PixivEndpoints(BaseEndpoint):
     async def illust_comment_replies(
         self,
         *,
-        comment_id: int | str,
+        id: int,
     ):
         return await self.request(
             "v2/illust/comment/replies",
             params={
-                "comment_id": comment_id,
+                "comment_id": id,
             },
         )
 
@@ -443,12 +459,12 @@ class PixivEndpoints(BaseEndpoint):
     async def novel_comment_replies(
         self,
         *,
-        comment_id: int | str,
+        id: int,
     ):
         return await self.request(
             "v2/novel/comment/replies",
             params={
-                "comment_id": comment_id,
+                "comment_id": id,
             },
         )
 
@@ -517,12 +533,14 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         id: int,
+        tag: Optional[str] = None,
     ):
         return await self.request(
             "v1/user/bookmarks/novel",
             params={
                "user_id": id,
                "restrict": "public",
+               "tag": tag,
             },
         )
 
