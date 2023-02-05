@@ -159,13 +159,15 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         filter: str = "for_ios",
-        include_ranking_label: bool = True,
+        include_privacy_policy: bool = False,
+        include_ranking_illusts: bool = False,
     ):
         return await self.request(
             "v1/illust/recommended",
             params={
                 "filter": filter,
-                "include_ranking_label": include_ranking_label,
+                "include_privacy_policy": include_privacy_policy,
+                "include_ranking_illusts": include_ranking_illusts,
             },
         )
 
@@ -473,13 +475,15 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         filter: str = "for_ios",
-        include_ranking_label: str = "true",
+        include_privacy_policy: bool = False,
+        include_ranking_illusts: bool = False,
     ):
         return await self.request(
             "v1/manga/recommended",
             params={
                 "filter": filter,
-                "include_ranking_label": include_privacy_policy,
+                "include_privacy_policy": include_privacy_policy,
+                "include_ranking_illusts": include_ranking_illusts,
             },
         )
 
@@ -516,8 +520,8 @@ class PixivEndpoints(BaseEndpoint):
         self,
         *,
         filter: str = "for_ios",
-        include_privacy_policy: str = "true",
-        include_ranking_novels: str = "true",
+        include_privacy_policy: bool = False,
+        include_ranking_novels: bool = False,
     ):
         return await self.request(
             "v1/novel/recommended",
