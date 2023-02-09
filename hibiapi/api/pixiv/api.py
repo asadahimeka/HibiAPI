@@ -387,6 +387,16 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
+    @cache_config(ttl=timedelta(hours=1))
+    async def related_novel(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request(
+            "v1/novel/related",
+            params={
+                "novel_id": id,
+                "offset": (page - 1) * size,
+            },
+        )
+
     @cache_config(ttl=timedelta(days=3))
     async def ugoira_metadata(self, *, id: int):
         return await self.request(
