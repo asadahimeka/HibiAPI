@@ -12,21 +12,31 @@ data:
   path: ./data # data目录所在位置
 
 server:
-  host: 127.0.0.1 # 监听主机
+  host: 0.0.0.0 # 监听主机
   port: 8080 # 端口
   gzip: true
 
   # 限定来源域名, 支持通配符, 参考:
   # https://fastapi.tiangolo.com/advanced/middleware/#trustedhostmiddleware
-  allowed: ["*"]
+  allowed:
+    - "*.cocomi.cf"
+    - "*.kanata.ml"
+    - "*.nanoka.top"
+    - "*.pixiv.pics"
 
   cors:
     origins:
+      - "https://pixiv.pics"
+      - "https://www.pixiv.pics"
+      - "https://z.pixiv.pics"
+      - "https://moe.pixiv.pics"
+      - "https://now.pixiv.pics"
+      - "https://v1.pixiv.pics"
+      - "https://v0.pixiv.pics"
       - "https://pixiv.kanata.ml"
       - "https://pixiviz.kanata.ml"
       - "https://pixiv.nanoka.top"
       - "https://www.nanoka.top"
-      - "http://localhost"
       - "http://localhost:8080"
     credentials: true
     methods: ["*"]
