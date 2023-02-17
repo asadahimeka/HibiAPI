@@ -553,10 +553,10 @@ class PixivEndpoints(BaseEndpoint):
         return await self.request(
             "v1/user/bookmarks/novel",
             params={
-               "user_id": id,
-               "restrict": "public",
-               "tag": tag,
-               "max_bookmark_id": max_bookmark_id or None,
+                "user_id": id,
+                "restrict": "public",
+                "tag": tag,
+                "max_bookmark_id": max_bookmark_id or None,
             },
         )
 
