@@ -34,6 +34,8 @@ server:
       - "https://pixiv.nanoka.top"
       - "https://www.nanoka.top"
       - "http://localhost:8080"
+      - "http://localhost"
+      - "https://localhost"
     credentials: true
     methods: ["*"]
     headers: ["*"]
