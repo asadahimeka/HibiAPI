@@ -146,15 +146,15 @@ class PixivEndpoints(BaseEndpoint):
         )
         return response.json()
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def illust(self, *, id: int):
         return await self.request("v1/illust/detail", params={"illust_id": id})
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def member(self, *, id: int):
         return await self.request("v1/user/detail", params={"user_id": id})
 
-    @cache_config(ttl=timedelta(hours=4))
+    @cache_config(ttl=timedelta(hours=6))
     async def illust_recommended(
         self,
         *,
@@ -171,7 +171,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=4))
+    @cache_config(ttl=timedelta(hours=6))
     async def user_recommended(
         self,
         *,
@@ -184,7 +184,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(minutes=30))
+    @cache_config(ttl=timedelta(minutes=60))
     async def illust_new(
         self,
         *,
@@ -199,7 +199,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=12))
+    @cache_config(ttl=timedelta(hours=24))
     async def search_autocomplete(
         self,
         *,
@@ -214,7 +214,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def spotlights(
         self,
         *,
@@ -232,7 +232,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def popular_preview(
         self,
         *,
@@ -253,7 +253,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=24))
     async def search_user(
         self,
         *,
@@ -269,7 +269,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=2))
     async def member_illust(
         self,
         *,
@@ -287,7 +287,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def favorite(
         self,
         *,
@@ -325,7 +325,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=6))
+    @cache_config(ttl=timedelta(hours=12))
     async def rank(
         self,
         *,
@@ -343,7 +343,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=6))
     async def search(
         self,
         *,
@@ -377,7 +377,7 @@ class PixivEndpoints(BaseEndpoint):
     async def tags(self):
         return await self.request("v1/trending-tags/illust")
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def related(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v2/illust/related",
@@ -387,7 +387,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def related_novel(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v1/novel/related",
@@ -418,7 +418,7 @@ class PixivEndpoints(BaseEndpoint):
     async def member_novel_series(self, *, id: int):
         return await self.request("v1/user/novel-series", params={"user_id": id})
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def related_member(self, *, id: int):
         return await self.request("v1/user/related", params={"seed_user_id": id})
 
@@ -480,7 +480,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=3))
+    @cache_config(ttl=timedelta(hours=6))
     async def manga_recommended(
         self,
         *,
@@ -515,7 +515,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=2))
     async def member_novel(self, *, id: int, page: int = 1, size: int = 30):
         return await self.request(
             "v1/user/novels",
@@ -525,7 +525,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=3))
+    @cache_config(ttl=timedelta(hours=6))
     async def novel_recommended(
         self,
         *,
@@ -542,7 +542,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=6))
     async def favorite_novel(
         self,
         *,
@@ -568,15 +568,15 @@ class PixivEndpoints(BaseEndpoint):
     async def novel_series(self, *, id: int):
         return await self.request("/v2/novel/series", params={"series_id": id})
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def novel_detail(self, *, id: int):
         return await self.request("/v2/novel/detail", params={"novel_id": id})
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=12))
     async def novel_text(self, *, id: int):
         return await self.request("/v1/novel/text", params={"novel_id": id})
 
-    @cache_config(ttl=timedelta(hours=1))
+    @cache_config(ttl=timedelta(hours=6))
     async def search_novel(
         self,
         *,
@@ -627,7 +627,7 @@ class PixivEndpoints(BaseEndpoint):
             },
         )
 
-    @cache_config(ttl=timedelta(minutes=10))
+    @cache_config(ttl=timedelta(minutes=60))
     async def novel_new(self, *, max_novel_id: Optional[int] = None):
         return await self.request(
             "/v1/novel/new", params={"max_novel_id": max_novel_id}

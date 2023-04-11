@@ -26,15 +26,12 @@ server:
       - "https://www.pixiv.pics"
       - "https://z.pixiv.pics"
       - "https://moe.pixiv.pics"
-      - "https://now.pixiv.pics"
       - "https://lxns.pixiv.pics"
       - "https://v1.pixiv.pics"
       - "https://v0.pixiv.pics"
-      - "https://pixiv.kanata.ml"
       - "https://www.nanoka.top"
-      - "http://localhost:8080"
       - "https://localhost"
-      - "https://tauri.localhost"
+      - "http://localhost:8080"
     credentials: true
     methods: ["*"]
     headers: ["*"]
