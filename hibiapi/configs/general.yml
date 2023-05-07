@@ -23,7 +23,6 @@ server:
   cors:
     origins:
       - "https://pixiv.pics"
-      - "https://www.pixiv.pics"
       - "https://z.pixiv.pics"
       - "https://moe.pixiv.pics"
       - "https://lxns.pixiv.pics"
@@ -31,6 +30,7 @@ server:
       - "https://v0.pixiv.pics"
       - "https://www.nanoka.top"
       - "https://pixiv.kanata.ml"
+      - "https://pixivel.kanata.ml"
       - "https://localhost"
       - "http://localhost:8080"
     credentials: true
