@@ -30,7 +30,7 @@ server:
       - "https://v0.pixiv.pics"
       - "https://www.nanoka.top"
       - "https://pixiv.kanata.ml"
-      - "https://pixivel.kanata.ml"
+      - "https://pxelk.kanata.ml"
       - "https://localhost"
       - "http://localhost:8080"
     credentials: true
