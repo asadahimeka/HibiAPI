@@ -23,6 +23,7 @@ server:
   cors:
     origins:
       - "https://pixiv.pics"
+      - "https://www.pixiv.pics"
       - "https://z.pixiv.pics"
       - "https://moe.pixiv.pics"
       - "https://lxns.pixiv.pics"
