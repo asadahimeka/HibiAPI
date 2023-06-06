@@ -32,7 +32,7 @@ server:
       - "https://www.nanoka.top"
       - "https://pixiv.kanata.ml"
       - "https://pxelk.kanata.ml"
-      - "https://localhost"
+      - "https://pixiv.cocomi.eu.org"
       - "http://localhost:8080"
     credentials: true
     methods: ["*"]
