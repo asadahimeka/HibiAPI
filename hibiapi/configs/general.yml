@@ -22,6 +22,7 @@ server:
 
   cors:
     origins:
+      - "https://pixiv-viewer.vercel.app"
       - "https://pixiv.pics"
       - "https://www.pixiv.pics"
       - "https://z.pixiv.pics"
