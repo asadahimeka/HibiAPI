@@ -409,14 +409,14 @@ class PixivEndpoints(BaseEndpoint):
     async def walkthrough_illusts(self):
         return await self.request("v1/walkthrough/illusts")
 
-    async def illust_series(self, *, id: int):
-        return await self.request("v1/illust/series", params={"illust_series_id": id})
+    async def illust_series(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request("v1/illust/series", params={"illust_series_id": id, "offset": (page - 1) * size})
 
-    async def member_illust_series(self, *, id: int):
-        return await self.request("v1/user/illust-series", params={"user_id": id})
+    async def member_illust_series(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request("v1/user/illust-series", params={"user_id": id, "offset": (page - 1) * size})
 
-    async def member_novel_series(self, *, id: int):
-        return await self.request("v1/user/novel-series", params={"user_id": id})
+    async def member_novel_series(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request("v1/user/novel-series", params={"user_id": id, "offset": (page - 1) * size})
 
     @cache_config(ttl=timedelta(hours=12))
     async def related_member(self, *, id: int):
@@ -565,8 +565,8 @@ class PixivEndpoints(BaseEndpoint):
         return await self.request("v1/trending-tags/novel")
 
     @cache_config(ttl=timedelta(hours=1))
-    async def novel_series(self, *, id: int):
-        return await self.request("/v2/novel/series", params={"series_id": id})
+    async def novel_series(self, *, id: int, page: int = 1, size: int = 30):
+        return await self.request("/v2/novel/series", params={"series_id": id, "last_order": (page - 1) * size})
 
     @cache_config(ttl=timedelta(hours=12))
     async def novel_detail(self, *, id: int):
