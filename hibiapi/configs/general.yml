@@ -31,8 +31,7 @@ server:
       - "https://v1.pixiv.pics"
       - "https://v0.pixiv.pics"
       - "https://www.nanoka.top"
-      - "https://pixiv.kanata.ml"
-      - "https://pxelk.kanata.ml"
+      - "https://pxelk.pixiv.pics"
       - "https://pixiv.cocomi.eu.org"
       - "http://localhost:8080"
     credentials: true
