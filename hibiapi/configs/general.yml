@@ -31,6 +31,8 @@ server:
       - "https://v1.pixiv.pics"
       - "https://v0.pixiv.pics"
       - "https://www.nanoka.top"
+      - "https://pixiv.nanoka.top"
+      - "https://ugoira.pixiv.pics"
       - "https://pxelk.pixiv.pics"
       - "https://pixiv.cocomi.eu.org"
       - "http://localhost:8080"
