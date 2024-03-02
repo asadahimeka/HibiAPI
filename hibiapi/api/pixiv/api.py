@@ -574,7 +574,18 @@ class PixivEndpoints(BaseEndpoint):
 
     @cache_config(ttl=timedelta(hours=12))
     async def novel_text(self, *, id: int):
-        return await self.request("/v1/novel/text", params={"novel_id": id})
+        # return await self.request("/v1/novel/text", params={"novel_id": id})
+        response = await self.client.get(
+            self._join(
+                base="https://nx2.cocomi.eu.org",
+                endpoint="api/pixiv/novel_text",
+                params={"id": id},
+            ),
+            headers={
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            },
+        )
+        return response.json()
 
     @cache_config(ttl=timedelta(hours=6))
     async def search_novel(
