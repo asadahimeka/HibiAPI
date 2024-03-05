@@ -9,6 +9,8 @@ from hibiapi.utils.decorators import enum_auto_doc
 from hibiapi.utils.net import catch_network_error
 from hibiapi.utils.routing import BaseEndpoint, dont_route, request_headers
 
+import json
+import re
 
 @enum_auto_doc
 class IllustType(str, Enum):
@@ -128,7 +130,7 @@ class PixivEndpoints(BaseEndpoint):
     @dont_route
     @catch_network_error
     async def request(
-        self, endpoint: str, *, params: Optional[Dict[str, Any]] = None
+        self, endpoint: str, *, params: Optional[Dict[str, Any]] = None, return_text: bool = False
     ) -> Dict[str, Any]:
         headers = self.client.headers.copy()
         if user := cast(PixivNetClient, self.client.net_client).user:
@@ -144,7 +146,31 @@ class PixivEndpoints(BaseEndpoint):
             ),
             headers=headers,
         )
+        if return_text:
+            return response.text
         return response.json()
+
+    @cache_config(ttl=timedelta(minutes=10))
+    async def live_list(self, *, page: int = 1, size: int = 30):
+        params = { "list_type": "popular" }
+        if page > 1:
+            params["offset"] = (page - 1) * size
+        return await self.request("v1/live/list", params=params)
+
+    @cache_config(ttl=timedelta(minutes=30))
+    async def live_detail(self, *, id: str):
+      response = await self.client.get(
+        self._join(
+            base="https://sketch.pixiv.net",
+            endpoint="api/lives/%s.json" % id,
+            params={},
+        ),
+        headers={
+          "Referer": "https://sketch.pixiv.net/",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        },
+      )
+      return response.json()
 
     @cache_config(ttl=timedelta(hours=12))
     async def illust(self, *, id: int):
@@ -161,14 +187,18 @@ class PixivEndpoints(BaseEndpoint):
         filter: str = "for_ios",
         include_privacy_policy: bool = False,
         include_ranking_illusts: bool = False,
+        params: Optional[str] = None,
     ):
+        _params = {
+          "filter": filter,
+          "include_privacy_policy": include_privacy_policy,
+          "include_ranking_illusts": include_ranking_illusts,
+        }
+        if params:
+          _params = json.loads(params)
         return await self.request(
             "v1/illust/recommended",
-            params={
-                "filter": filter,
-                "include_privacy_policy": include_privacy_policy,
-                "include_ranking_illusts": include_ranking_illusts,
-            },
+            params=_params,
         )
 
     @cache_config(ttl=timedelta(hours=6))
@@ -355,6 +385,7 @@ class PixivEndpoints(BaseEndpoint):
         end_date: str = None,
         include_translated_tag_results: bool = True,
         merge_plain_keyword_results: bool = True,
+        search_ai_type: int = None,
         page: int = 1,
         size: int = 30,
     ):
@@ -369,6 +400,7 @@ class PixivEndpoints(BaseEndpoint):
                 "start_date": start_date,
                 "end_date": end_date,
                 "duration": duration,
+                "search_ai_type": search_ai_type,
                 "offset": (page - 1) * size,
             },
         )
@@ -573,19 +605,31 @@ class PixivEndpoints(BaseEndpoint):
         return await self.request("/v2/novel/detail", params={"novel_id": id})
 
     @cache_config(ttl=timedelta(hours=12))
-    async def novel_text(self, *, id: int):
-        # return await self.request("/v1/novel/text", params={"novel_id": id})
-        response = await self.client.get(
-            self._join(
-                base="https://nx2.cocomi.eu.org",
-                endpoint="api/pixiv/novel_text",
-                params={"id": id},
-            ),
-            headers={
-              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    async def webview_novel(self, *, id: int, raw: bool = False):
+        resp = await self.request(
+            "webview/v2/novel",
+            params={
+              "id": id,
+              "viewer_version": "20221031_ai",
             },
+            return_text=True,
         )
-        return response.json()
+        if raw:
+          return resp
+        try:
+          json_str = re.search(r"novel:\s({.+}),\s+isOwnWork", resp).groups()[0].encode()
+          return json.loads(json_str)
+        except Exception as e:
+          return { "error": "Parse novel error: %s" % e }
+
+    @cache_config(ttl=timedelta(hours=12))
+    async def novel_text(self, *, id: int):
+        resp = await self.webview_novel(id=id, raw=False)
+        return { "novel_text": resp["text"] or "" }
+
+    # @cache_config(ttl=timedelta(hours=12))
+    # async def novel_text(self, *, id: int):
+    #     return await self.request("/v1/novel/text", params={"novel_id": id})
 
     @cache_config(ttl=timedelta(hours=6))
     async def search_novel(
@@ -599,6 +643,7 @@ class PixivEndpoints(BaseEndpoint):
         start_date: str = None,
         end_date: str = None,
         duration: Optional[SearchDurationType] = None,
+        search_ai_type: int = None,
         page: int = 1,
         size: int = 30,
     ):
@@ -613,6 +658,7 @@ class PixivEndpoints(BaseEndpoint):
                 "start_date": start_date,
                 "end_date": end_date,
                 "duration": duration,
+                "search_ai_type": search_ai_type,
                 "offset": (page - 1) * size,
             },
         )
