@@ -364,7 +364,7 @@ class PixivEndpoints(BaseEndpoint):
         page: int = 1,
         size: int = 30,
     ):
-        return await self.request(
+        resp = await self.request(
             "v1/illust/ranking",
             params={
                 "mode": mode,
@@ -372,6 +372,9 @@ class PixivEndpoints(BaseEndpoint):
                 "offset": (page - 1) * size,
             },
         )
+        if not resp['next_url'] and len(resp.get('illusts', [])) == 0:
+            raise RuntimeError("No results.")
+        return resp
 
     @cache_config(ttl=timedelta(hours=6))
     async def search(
