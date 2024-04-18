@@ -21,24 +21,7 @@ server:
   allowed: ["*"]
 
   cors:
-    origins:
-      - "https://pixiv-viewer.vercel.app"
-      - "https://pixiv.pics"
-      - "https://www.pixiv.pics"
-      - "https://z.pixiv.pics"
-      - "https://moe.pixiv.pics"
-      - "https://lxns.pixiv.pics"
-      - "https://v1.pixiv.pics"
-      - "https://v0.pixiv.pics"
-      - "https://www.nanoka.top"
-      - "https://pixiv.nanoka.top"
-      - "https://ugoira.pixiv.pics"
-      - "https://pxelk.pixiv.pics"
-      - "https://pixiv.cocomi.eu.org"
-      - "http://localhost:8080"
-      - "https://localhost"
-      - "https://tauri.localhost"
-      - "https://fav.pixiv.pics"
+    origins: ["*"]
     credentials: true
     methods: ["*"]
     headers: ["*"]
